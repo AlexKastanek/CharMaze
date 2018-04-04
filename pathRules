@@ -1,0 +1,3 @@
+When generating a path from S to T, the rules are as follows:
+1. If the point is a barrier ('/'), then it cannot be a path
+2. If the point lies adjacent to another path ('*') that isn't the previous path point, then it cannot be a path
