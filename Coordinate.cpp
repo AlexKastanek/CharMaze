@@ -14,14 +14,6 @@ Coordinate::~Coordinate()
 
 }
 
-int* Coordinate::getPos()
-{
-
-	int pos[2] = {xPos, yPos};
-	return pos;
-
-}
-
 int Coordinate::getXPos()
 {
 
@@ -72,7 +64,7 @@ void Coordinate::setContent(char contentSource)
 
 }
 
-void Coordinate::operator=(const Coordinate source)
+void Coordinate::operator=(Coordinate source)
 {
 
 	xPos = source.getXPos();
@@ -81,7 +73,7 @@ void Coordinate::operator=(const Coordinate source)
 
 }
 
-bool Coordinate::operator==(const Coordinate source)
+bool Coordinate::operator==(Coordinate source)
 {
 
 	if (xPos != source.getXPos())

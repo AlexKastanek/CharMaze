@@ -154,6 +154,10 @@ void CharMaze::generateMaze()
 	while (maze[pathPos[0]][pathPos[1]] != target)
 	{
 	
+		Coordinate pos;
+		pos.setPos(pathPos[0], pathPos[1]);
+		setPath.push_back(pos);
+	
 		for (int i = 0; i < 4; i++)
 		{
 			availDirections[i] = true;
@@ -161,16 +165,19 @@ void CharMaze::generateMaze()
 		directionCount = 4;
 	
 		//pick direction
-		bool validDirection = false;
+		bool validDirection = false, backtrack = false;
 		int nextPathPos[2];
 		while (!validDirection)
 		{
 		
 			nextPathPos[0] = pathPos[0];
 			nextPathPos[1] = pathPos[1];
+			
+			cout << "ok3" << endl;
 		
 
-			int directionIndex = rand() % directionCount;
+			int directionIndex = rand() % directionCount + 1;
+			directionIndex--;
 			//if direction not available, increment until available direction is found
 			while (!availDirections[directionIndex])
 			{
@@ -178,7 +185,9 @@ void CharMaze::generateMaze()
 				//cout << directionIndex << endl;
 			}
 			direction = directionIndex + 1;
-			cout << direction << endl;
+			//cout << direction << endl;
+			
+			cout << "ok4" << endl;
 			
 			switch (direction)
 			{
@@ -214,6 +223,8 @@ void CharMaze::generateMaze()
 			
 			}
 			
+			cout << "ok5" << endl;
+			
 			//determine if direction is valid
 			if (maze[nextPathPos[0]][nextPathPos[1]] == barrier)
 			{
@@ -230,6 +241,7 @@ void CharMaze::generateMaze()
 			//if direction is not valid, determine if any available directions remain
 			if (!validDirection)
 			{
+				cout << "direction invalid" << endl;
 				availDirections[direction-1] = false;
 				directionCount--;
 				bool noAvailDir = false;
@@ -242,26 +254,124 @@ void CharMaze::generateMaze()
 					}
 					else noAvailDir = true;
 				}
-				//if no available directions remain, backtrack until there is an opening
+				//if no available directions remain, backtrack until there is 
+				//an opening
 				if (noAvailDir)
 				{
+					backtrack = true;
+				} else backtrack = false;
+				
+				while (noAvailDir)
+				{
 					//begin backtracking
+					backtrack = true;
+					cout << "no directions remaining" << endl;
 					
-				}	
+					//set backtrackAmount and ensure amount is at least 2
+					int backtrackAmount;
+					/*if (setPath.size() < 10)
+					{
+						backtrackAmount = 2;
+					}
+					else backtrackAmount = rand() % (setPath.size() / 4) + 2;*/
+					
+					cout << setPath.size() << endl;
+					if (setPath.size() == 2)
+					{
+						setPath.pop_back();
+					}
+					else if (setPath.size() == 1)
+					{
+						resetMaze();
+					}
+					else 
+					{
+						for (int i = 0; i < 2; i++)
+						{
+							setPath.pop_back();
+						}
+					}
+					//cout << "ok" << endl;
+					
+					Coordinate tempPos = setPath.back();
+					pathPos[0] = tempPos.getXPos();
+					pathPos[1] = tempPos.getYPos();
+					
+					//cout << "ok" << endl;
+					
+					//getting new available directions
+					for (int i = 0; i < 4; i++)
+					{
+						availDirections[i] = false;
+					}
+					char north = maze[pathPos[0] + 1][pathPos[1]];
+					char south = maze[pathPos[0] - 1][pathPos[1]];
+					char east = maze[pathPos[0]][pathPos[1] + 1];
+					char west = maze[pathPos[0]][pathPos[1] - 1];
+					if (north != path && north != barrier)
+					{
+						availDirections[0] = true;
+					}
+					if (south != path && south != barrier)
+					{
+						availDirections[1] = true;
+					}
+					if (east != path && east != barrier)
+					{
+						availDirections[2] = true;
+					}
+					if (west != path && west != barrier)
+					{
+						availDirections[3] = true;
+					}
+					directionCount = 0;
+					for (int i = 0; i < 4; i++)
+					{
+						if (availDirections[i])
+						{
+							directionCount++;
+						}
+					}
+					cout << directionCount << endl;
+					
+					if (directionCount > 0)
+					{
+						noAvailDir = false;
+					}
+					
+				}
 			}
-			lastDirection = direction;
-		
 		}
 		
-		pathPos[0] = nextPathPos[0];
-		pathPos[1] = nextPathPos[1];
-		if (maze[pathPos[0]][pathPos[1]] != target && maze[pathPos[0]][pathPos[1]] != start)
+		if (!backtrack)
 		{
-			maze[pathPos[0]][pathPos[1]] = path;
+			pathPos[0] = nextPathPos[0];
+			pathPos[1] = nextPathPos[1];
+			if (maze[pathPos[0]][pathPos[1]] != target && maze[pathPos[0]][pathPos[1]] != start)
+			{
+				maze[pathPos[0]][pathPos[1]] = path;
+			}
 		}
 		
 	}
 	
+
+}
+
+void CharMaze::resetMaze()
+{
+
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			maze[i][j] = '\0';
+		}
+	}
+	
+	setPath.clear();
+	
+	generateMaze();
 
 }
 

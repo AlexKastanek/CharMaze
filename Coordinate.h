@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <fstream>
-#include "CharMaze.h"
+//#include "CharMaze.h"
 
 using namespace std;
 
@@ -15,7 +15,7 @@ class Coordinate
 		Coordinate();
 		~Coordinate();
 		
-		int* getPos();
+		//int* getPos();
 		int getXPos();
 		int getYPos();
 		char getContent();
@@ -25,9 +25,9 @@ class Coordinate
 		void setYPos(int);
 		void setContent(char);
 		
-		void operator=(const Coordinate);
+		void operator=(Coordinate);
 		
-		bool operator==(const Coordinate);
+		bool operator==(Coordinate);
 	
 	private:
 	

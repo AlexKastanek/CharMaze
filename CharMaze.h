@@ -6,6 +6,7 @@
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
+#include "Coordinate.h"
 
 using namespace std;
 
@@ -20,6 +21,7 @@ class CharMaze
         
         void generateMaze();
         void generateMaze(int);
+        void resetMaze();
         
         int getAdjPathCount(int, int);
         
@@ -35,6 +37,8 @@ class CharMaze
     	static int playerPos[2];
     	
     	char** maze;
+    	
+    	vector<Coordinate> setPath;
     	
     	const char start = 'S';
     	const char target = 'T';
