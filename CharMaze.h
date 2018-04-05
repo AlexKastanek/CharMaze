@@ -23,7 +23,7 @@ class CharMaze
         void generateMaze(int);
         void resetMaze();
         
-        int getAdjPathCount(int, int);
+        int getAdjCount(int, int, char);
         
         void printMaze();
         

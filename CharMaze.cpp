@@ -149,9 +149,9 @@ void CharMaze::generateMaze()
 	
 	//generate path from S to T
 	int pathPos[2] = {startPos[0], startPos[1]};
-	int direction = 0, lastDirection = 0, directionCount = 4;
+	int direction = 0, directionCount = 4;
 	bool availDirections[4] = {1,1,1,1};
-	while (maze[pathPos[0]][pathPos[1]] != target)
+	while (getAdjCount(pathPos[0], pathPos[1], target) == 0)
 	{
 	
 		Coordinate pos;
@@ -172,9 +172,6 @@ void CharMaze::generateMaze()
 		
 			nextPathPos[0] = pathPos[0];
 			nextPathPos[1] = pathPos[1];
-			
-			cout << "ok3" << endl;
-		
 
 			int directionIndex = rand() % directionCount + 1;
 			directionIndex--;
@@ -182,12 +179,8 @@ void CharMaze::generateMaze()
 			while (!availDirections[directionIndex])
 			{
 				directionIndex = (directionIndex + 1) % 4;
-				//cout << directionIndex << endl;
 			}
 			direction = directionIndex + 1;
-			//cout << direction << endl;
-			
-			cout << "ok4" << endl;
 			
 			switch (direction)
 			{
@@ -223,15 +216,13 @@ void CharMaze::generateMaze()
 			
 			}
 			
-			cout << "ok5" << endl;
-			
 			//determine if direction is valid
 			if (maze[nextPathPos[0]][nextPathPos[1]] == barrier)
 			{
 				validDirection = false;
 				//cout << "hit a barrier, resetting..." << endl;
 			}
-			else if (getAdjPathCount(nextPathPos[0], nextPathPos[1]) > 1)
+			else if (getAdjCount(nextPathPos[0], nextPathPos[1], path) > 1)
 			{
 				validDirection = false;
 				//cout << "too many adjacent paths, resetting..." << endl;
@@ -241,7 +232,6 @@ void CharMaze::generateMaze()
 			//if direction is not valid, determine if any available directions remain
 			if (!validDirection)
 			{
-				cout << "direction invalid" << endl;
 				availDirections[direction-1] = false;
 				directionCount--;
 				bool noAvailDir = false;
@@ -265,39 +255,31 @@ void CharMaze::generateMaze()
 				{
 					//begin backtracking
 					backtrack = true;
-					cout << "no directions remaining" << endl;
-					
-					//set backtrackAmount and ensure amount is at least 2
-					int backtrackAmount;
-					/*if (setPath.size() < 10)
+					int backtrackAmount = rand() % 4 + 2;
+					if (setPath.size() < 5 && setPath.size() > 2)
 					{
 						backtrackAmount = 2;
 					}
-					else backtrackAmount = rand() % (setPath.size() / 4) + 2;*/
-					
-					cout << setPath.size() << endl;
 					if (setPath.size() == 2)
 					{
-						setPath.pop_back();
+						//setPath.pop_back();
+						backtrackAmount = 1;
 					}
 					else if (setPath.size() == 1)
 					{
 						resetMaze();
+						//maybe implement an opening search
 					}
-					else 
-					{
-						for (int i = 0; i < 2; i++)
-						{
-							setPath.pop_back();
-						}
-					}
-					//cout << "ok" << endl;
 					
+					for (int i = 0; i < backtrackAmount; i++)
+					{
+						setPath.pop_back();
+					}
+					
+					//setting new path coordinates
 					Coordinate tempPos = setPath.back();
 					pathPos[0] = tempPos.getXPos();
 					pathPos[1] = tempPos.getYPos();
-					
-					//cout << "ok" << endl;
 					
 					//getting new available directions
 					for (int i = 0; i < 4; i++)
@@ -324,6 +306,8 @@ void CharMaze::generateMaze()
 					{
 						availDirections[3] = true;
 					}
+					
+					//resetting direction count
 					directionCount = 0;
 					for (int i = 0; i < 4; i++)
 					{
@@ -332,7 +316,6 @@ void CharMaze::generateMaze()
 							directionCount++;
 						}
 					}
-					cout << directionCount << endl;
 					
 					if (directionCount > 0)
 					{
@@ -375,29 +358,29 @@ void CharMaze::resetMaze()
 
 }
 
-int CharMaze::getAdjPathCount(int x, int y)
+int CharMaze::getAdjCount(int x, int y, char obj)
 {
 
-	int adjPathCount = 0;
+	int adjCount = 0;
 	
-	if (maze[x+1][y] == path)
+	if (maze[x+1][y] == obj)
 	{
-		adjPathCount++;
+		adjCount++;
 	}
-	if (maze[x-1][y] == path)
+	if (maze[x-1][y] == obj)
 	{
-		adjPathCount++;
+		adjCount++;
 	}
-	if (maze[x][y+1] == path)
+	if (maze[x][y+1] == obj)
 	{
-		adjPathCount++;
+		adjCount++;
 	}
-	if (maze[x][y-1] == path)
+	if (maze[x][y-1] == obj)
 	{
-		adjPathCount++;
+		adjCount++;
 	}
 	
-	return adjPathCount;
+	return adjCount;
 
 }
 
